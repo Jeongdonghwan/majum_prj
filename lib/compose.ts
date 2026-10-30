@@ -6,6 +6,7 @@ import regionData from '../data/regions-jeolla.json';
 import { AREAS, Area, STEPS } from './content';
 import { BRAND, BUSINESS, REVIEWS } from './site';
 import { j } from './ko';
+import { angleOf } from './angles';
 
 export interface Page { kw: string; slug: string; term: string; region: string; level: string; parent: string; sido: string; wave: number }
 interface Facts { name: string; kw: string; route: string; traits: string; nearby: string[]; note: string }
@@ -52,7 +53,7 @@ function topicOf(term: string): { topic: Topic; area?: Area } {
   if (/수강|학원|교육|아카데미|자격|배우|수업|강사|트레이닝|워크샵|마스터클래스|실습|초보|취업|MP교육자/.test(term)) return { topic: 'academy' };
   if (/창업|수익/.test(term)) return { topic: 'startup' };
   if (/가발/.test(term)) return { topic: 'compare-wig' };
-  if (/모발이식|병원|피부과|탈모약|처방|검사|클리닉|증모/.test(term)) return { topic: 'compare-medical' };
+  if (/모발이식|병원|피부과|탈모약|검사|클리닉|증모/.test(term)) return { topic: 'compare-medical' };
   if (/비용|가격/.test(term)) return { topic: 'price' };
   for (const [re, key] of AREA_RULES) if (re.test(term)) return { topic: 'area', area: AREAS.find((a) => a.key === key) };
   if (/부작용|통증|아픈|딱지|후회|회복|유지|주의|색빠짐|후관리/.test(term)) return { topic: 'care' };
@@ -136,9 +137,9 @@ export function compose(p: Page) {
   // ---- 지역 (고유 사실) ----
   const regionParas = [
     pick([
-      `${j(f.kw, '은')} ${f.traits}. ${BRAND} 본점까지는 ${f.route}입니다.`,
-      `${f.kw}에서 오시는 길은 ${f.route}. ${f.traits}가 있는 지역이라 ${f.note}.`.replace('.. ', '. '),
-      `${BRAND}는 광주 서구 풍암동 한 곳에서 시술합니다. ${f.kw}에서는 ${f.route}이고, ${f.note}.`,
+      `${j(f.kw, '은')} ${f.traits}. ${p.term} 상담으로 ${BRAND} 본점까지 오시는 길은 ${f.route}입니다.`,
+      `${f.kw}에서 ${p.term} 때문에 오시는 길은 ${f.route}. ${f.traits}가 있는 지역이라 ${f.note}.`.replace('.. ', '. '),
+      `${p.term}도 광주 서구 풍암동 본점 한 곳에서 봅니다. ${f.kw}에서는 ${f.route}이고, ${f.note}.`,
     ], s, 'r1'),
     pick([
       `${near.join('·')} 쪽에서도 같은 길로 오십니다. 먼 곳에서 오시는 분은 카카오톡으로 사진을 먼저 보내주시면, 방문 전에 시술이 맞는지부터 말씀드리고 상담과 1차 시술을 한 번에 잡습니다.`,
@@ -165,16 +166,18 @@ export function compose(p: Page) {
   // ---- 과정 3단계 (6단계 중 상담·중간 하나·보강) ----
   const mid = STEPS[1 + (hash(s) % 3)];
   const steps = [
-    { t: '사진 상담', d: `${place}에서 오시기 전 카카오톡으로 정면·위·옆 사진을 보내주세요. 시술이 맞는지부터 말씀드립니다.` },
+    { t: '사진 상담', d: pick([`${place}에서 오시기 전 카카오톡으로 정면·위·옆 사진을 보내주세요. ${p.term} 상담이 맞는지부터 말씀드립니다.`, `${p.term} 문의는 사진 세 장이면 시작됩니다. 정면·위·옆을 찍어 카카오톡으로 보내주세요.`, `방문 전에 지금 상태를 사진으로 먼저 봅니다. ${place}에서 오시는 길이 있어 ${p.term} 상담이 헛걸음이 되지 않게 하기 위해서입니다.`], s, 'st') },
     { t: mid.t, d: mid.d },
     { t: STEPS[5].t, d: STEPS[5].d },
   ];
 
   // ---- FAQ (지역 2 + 주제 2) ----
-  const regionFaq = [
+  const regionFaq = rotate([
     { q: `${place}에서 본점까지 얼마나 걸리나요?`, a: `${f.route}입니다. ${BUSINESS.address}, ${BUSINESS.directions}` },
     { q: `${place} 근처에 지점이 있나요?`, a: `시술은 광주 서구 풍암동 본점 한 곳에서 합니다. ${near.join('·')} 분들도 본점으로 오시고, 거리가 멀면 사진 상담 뒤 상담과 1차 시술을 하루에 잡습니다. ${topicTail[topic]}.` },
-  ];
+    { q: `${place}에서 ${j(p.term, '을')} 알아보는데 꼭 방문해야 하나요?`, a: `사진 상담은 카카오톡으로 먼저 받습니다. 시술과 수업은 광주 서구 풍암동 본점에서 하고, ${f.kw}에서는 ${f.route}입니다.` },
+    { q: `${place}에서 오면 주차할 수 있나요?`, a: `본점은 주차가 가능합니다. ${BUSINESS.directions}` },
+  ], s, 'rf').slice(0, 2);
   const topicFaq: Record<Topic, { q: string; a: string }[]> = {
     smp: [{ q: '자연스러워 보일까요?', a: '진하게 채우기보다 기존 모발과의 연결감을 맞춥니다. 모발 색과 두피 톤에 따라 두 가지 색소의 농도를 나눕니다.' }, { q: '몇 번 받아야 하나요?', a: '미리 회차를 못 박지 않습니다. 한 번에 진하게 넣지 않고, 자리 잡은 상태를 보며 필요한 만큼 보강합니다.' }, { q: '머리를 짧게 잘라도 티가 안 나나요?', a: '짧은 머리일수록 점 크기와 간격이 중요합니다. 삭발에 가까운 길이는 삭발 디자인 기준으로 따로 봅니다.' }],
     area: [{ q: `${mainArea.name}만 해도 되나요?`, a: `됩니다. 주변 모발 밀도와 색에 맞춰 넣기 때문에 한 부위만 해도 경계가 생기지 않게 디자인합니다.` }, { q: '아프거나 딱지가 생기나요?', a: '두피 1~2mm 깊이에 얕게 시술합니다. 딱지와 붉은기 정도는 사람마다 다르며, 관리법을 시술 당일 안내합니다.' }, { q: '한 번에 끝나나요?', a: '첫 시술에서 범위를 잡고, 자리 잡은 뒤 상태를 보고 보강합니다. 회차를 미리 정하지 않습니다.' }],
@@ -185,7 +188,8 @@ export function compose(p: Page) {
     care: [{ q: '딱지는 얼마나 가나요?', a: '사람마다 다릅니다. 일주일은 떼지 않고 사우나·수영을 쉬는 것이 핵심이고, 그 뒤로는 평소처럼 샴푸해도 됩니다.' }, { q: '색이 빠지면 어떻게 하나요?', a: '빠지는 속도는 두피 상태와 자외선에 따라 다릅니다. 유지 보강은 몇 년 단위로 보고, 미리 정해 두지 않습니다.' }, { q: '운동은 언제부터 되나요?', a: '일주일은 사우나·수영·격한 운동을 쉬고, 그 뒤로는 평소처럼 하셔도 됩니다.' }],
     price: [{ q: '비용이 얼마인가요?', a: '부위와 범위, 현재 상태에 따라 달라져 금액을 먼저 말씀드리지 않습니다. 사진이나 방문 상담으로 상태를 본 뒤 안내합니다.' }, { q: '상담만 받아도 되나요?', a: '됩니다. 사진 상담은 카카오톡으로, 방문 상담은 예약 뒤 본점에서 받습니다.' }, { q: '사진만 보내도 금액을 알 수 있나요?', a: '범위와 방향은 사진으로 말씀드리지만, 금액은 방문 상담에서 상태를 본 뒤 확정합니다.' }],
   };
-  const faq = rotate([...regionFaq, ...rotate(topicFaq[topic], s, 'tf').slice(0, 2)], s, 'faq');
+  const angle = angleOf(p.term, place, s);
+  const faq = rotate([...regionFaq, ...(angle?.faq || []), ...rotate(topicFaq[topic], s, 'tf').slice(0, angle ? 1 : 2)], s, 'faq');
 
   // ---- 후기 (실제 수치, 지역 주장 없이) ----
   const picks = rotate(REVIEWS.keywords, s, 'rv').slice(0, 3);
@@ -203,9 +207,9 @@ export function compose(p: Page) {
     topic, area: mainArea, area2, facts: f,
     title, description, lead,
     eyebrow: `${place} · 두피문신 SMP`,
-    intro, region, focus, steps, faq, reviews,
+    intro, angle, region, focus, steps, faq, reviews,
     where: isHome ? `본점은 ${place} 풍암동에 있습니다. ${BUSINESS.directions}` : `${place}에서는 ${f.route}. ${BUSINESS.directions}`,
-    closing: { heading: pick([`${place}, 사진부터 보내주세요`, `${f.kw}에서 오시기 전에`, `${place} ${p.term} 상담`], s, 'ch'), text: `지금 상태 사진을 보내주시면 시술이 맞는지, 무엇부터 봐야 하는지 말씀드립니다. 방문은 ${f.route}.` },
+    closing: { heading: pick([`${place}, 사진부터 보내주세요`, `${f.kw}에서 오시기 전에`, `${place} ${p.term} 상담`], s, 'ch'), text: pick([`지금 상태 사진을 보내주시면 ${p.term} 상담이 맞는지, 무엇부터 봐야 하는지 말씀드립니다. 방문은 ${f.route}.`, `${p.term}, 사진으로 먼저 보고 방문 일정을 잡습니다. ${f.kw}에서는 ${f.route}.`], s, 'ct') },
     beforeAfter: mainArea.photos,
     showAcademy: topic === 'academy' || topic === 'startup',
   };

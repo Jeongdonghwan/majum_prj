@@ -59,6 +59,10 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
       <section className="sec">
         <div className="wrap narrow">
           {c.intro.map((t, i) => <p key={i} className={i === 0 ? 'body first' : 'body'} data-reveal>{t}</p>)}
+          {c.angle && <>
+            <h2 className="angle-h" data-reveal>{c.angle.heading}</h2>
+            {c.angle.paras.map((t, i) => <p key={i} className="body" data-reveal>{t}</p>)}
+          </>}
         </div>
       </section>
 

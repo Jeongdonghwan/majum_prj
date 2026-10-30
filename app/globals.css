@@ -267,3 +267,4 @@ figure.mask { margin: 0; border-radius: 24px; overflow: hidden; }
 .rv-compact li { background: #fff; border-radius: 8px; padding: 4px 10px; font-size: .9rem; }
 .rv-compact li em { font-style: normal; color: var(--wine); font-weight: 700; margin-left: 6px; }
 .page-h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; margin: 0; }
+.angle-h { font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 800; letter-spacing: -.02em; margin: 48px 0 14px; }

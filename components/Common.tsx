@@ -28,7 +28,7 @@ export const Head = ({ label, title, sub, left }: { no?: string; label: string; 
 export const Header = () => (
   <header className="hd">
     <div className="wrap hd-in">
-      <Link href="/" className="logo"><i aria-hidden="true" />{BRAND}</Link>
+      <Link href="/" className="logo">{BRAND}</Link>
       <nav className="nav">
         <Link href="/#results">사례</Link>
         <Link href="/#areas">부위</Link>

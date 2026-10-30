@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: '광주 서구 풍암동 두피문신 SMP 마음에점을찍다. 정수리·헤어라인·M자·여성 가르마·흉터 커버, 아카데미 수강·창업 상담.',
   robots: { index: true, follow: true },
   openGraph: { type: 'website', siteName: BRAND, locale: 'ko_KR', images: ['/images/designer.webp'] },
-  // TODO: 서치어드바이저·서치콘솔 소유확인 코드
+  verification: { google: 'PxfdYYx_rOi7N5bFaSgX2pOdm44hwA_HFpO_5Ebj3lA', other: { 'naver-site-verification': '1d924703c059bea31b6eb8e3712275e99ca13915' } },
 };
 
 export const viewport: Viewport = { themeColor: '#ffffff', width: 'device-width', initialScale: 1 };

@@ -39,7 +39,7 @@ maeumdot.com(광주 서구 풍암동 두피문신 SMP)을 바탕으로 만든 �
 
 ## 확인 필요
 
-- [ ] 새 사이트 도메인 (`lib/site.ts` SITE_URL, 지금은 maeumdot.com)
+- [x] 새 사이트 도메인: maumsmp.co.kr (2026-10-30, `lib/site.ts` SITE_URL)
 - [ ] 운영 시간 (사이트에 표기 없음)
 - [ ] 네이버 리뷰 수 갱신 주기 (`lib/site.ts` REVIEWS)
 - [ ] 서치어드바이저·서치콘솔 소유확인 코드 (`app/layout.tsx`)

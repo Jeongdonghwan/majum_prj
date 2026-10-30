@@ -1,6 +1,6 @@
 // 사이트 설정·브랜드 사실 — 출처: maeumdot.com (2026-10-25 확인). 바뀌면 이 파일만 고친다.
 
-export const SITE_URL = process.env.SITE_URL || 'https://maeumdot.com'; // 빌드 시 SITE_URL 로 바꿈 (미리보기 포트·새 도메인)
+export const SITE_URL = process.env.SITE_URL || 'https://maumsmp.co.kr'; // 빌드 시 SITE_URL 로 바꿈 (미리보기 포트·새 도메인)
 export const BRAND = '마음에점을찍다';
 export const BRAND_EN = 'DOT YOUR MIND';
 

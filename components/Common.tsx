@@ -1,6 +1,6 @@
 // 마음에점을찍다 공통 UI — 밝은 바탕, 가운데 섹션 제목, 둥근 카드(사용자 지정 시안). 이모지 없음.
 import Link from 'next/link';
-import { BRAND, CONTACT, BUSINESS, DISCLAIMER, REVIEWS, tel } from '../lib/site';
+import { BRAND, CONTACT, BUSINESS, DISCLAIMER, REVIEWS, UPDATED, tel } from '../lib/site';
 import { AREAS, STEPS } from '../lib/content';
 
 export const JsonLd = ({ data }: { data: object | object[] }) => (
@@ -46,6 +46,7 @@ export const Footer = () => (
       <div>
         <p className="ft-brand">{BRAND}</p>
         <p className="ft-en">DOT YOUR MIND · THE BEGINNING OF K-BEAUTY</p>
+        <p className="ft-links"><Link href="/about/">소개</Link><Link href="/area/">지역별 안내</Link></p>
       </div>
       <div>
         <p className="ft-h">상담</p>
@@ -67,7 +68,7 @@ export const Footer = () => (
         </p>
       </div>
     </div>
-    <div className="wrap ft-note">{DISCLAIMER}<br />© {new Date().getFullYear()} {BRAND}</div>
+    <div className="wrap ft-note">{DISCLAIMER}<br />© {new Date().getFullYear()} {BRAND} · 최종 수정 <time dateTime={UPDATED}>{UPDATED}</time></div>
   </footer>
 );
 

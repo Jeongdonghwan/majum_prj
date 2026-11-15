@@ -37,3 +37,4 @@ export const REVIEWS = {
 export const DISCLAIMER = 'SMP는 두피에 색소를 넣어 겉으로 보이는 대비를 줄이는 미용 시술입니다. 탈모를 치료하거나 모발을 다시 자라게 하는 방법이 아닙니다.';
 
 export const tel = `tel:${CONTACT.phone.replace(/[^0-9]/g, '')}`;
+export const UPDATED = '2026-11-16'; // content revision date - bump when page text changes

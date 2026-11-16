@@ -1,4 +1,4 @@
-import { SITE_URL, BRAND, CONTACT, BUSINESS, REVIEWS } from './site';
+import { SITE_URL, UPDATED, BRAND, CONTACT, BUSINESS, REVIEWS } from './site';
 
 export const businessJsonLd = () => ({
   '@context': 'https://schema.org',
@@ -33,7 +33,7 @@ export const serviceJsonLd = (o: { name: string; description: string; path: stri
   description: o.description,
   url: `${SITE_URL}${o.path}`,
   areaServed: { '@type': 'Place', name: o.area },
-  provider: { '@id': `${SITE_URL}/#business` },
+  provider: { '@id': `${SITE_URL}/#business` }, dateModified: UPDATED,
 });
 
 // 캐러셀용 ItemList — path는 인코딩된 경로(pageEncodedPath)

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: `광주 두피문신 SMP 탈모 | ${BRAND}`, template: '%s' },
   description: '광주 서구 풍암동 두피문신 SMP 마음에점을찍다. 정수리·헤어라인·M자·여성 가르마·흉터 커버, 아카데미 수강·창업 상담.',
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   openGraph: { type: 'website', siteName: BRAND, locale: 'ko_KR', images: ['/images/designer.webp'] },
   verification: { google: 'PxfdYYx_rOi7N5bFaSgX2pOdm44hwA_HFpO_5Ebj3lA', other: { 'naver-site-verification': '1d924703c059bea31b6eb8e3712275e99ca13915' } },
 };
@@ -29,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <StickyBar />
         <Motion />
+        <script dangerouslySetInnerHTML={{ __html: "document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'',k=h.indexOf('tel:')===0?'tel':h.indexOf('sms:')===0?'sms':/kakao/.test(h)?'kakao':'';if(k&&navigator.sendBeacon)navigator.sendBeacon('/_t?e='+k+'&p='+encodeURIComponent(location.pathname))},true)" }} />
       </body>
     </html>
   );

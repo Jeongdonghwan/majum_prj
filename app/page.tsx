@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BRAND, DISCLAIMER } from '../lib/site';
 import { AREAS, PIGMENTS, PROFILE, ACADEMY_POINTS } from '../lib/content';
-import { GROUPS, PAGES, groupPath, pageEncodedPath } from '../lib/compose';
+import { GROUPS, PAGES, groupPath, pageEncodedPath, pageImage } from '../lib/compose';
 import { faqJsonLd, itemListJsonLd } from '../lib/jsonld';
 import { AreaList, Carousel, Cta, Head, JsonLd, Location, ReviewBars, ReviewMarquee, Steps } from '../components/Common';
 
@@ -24,7 +24,7 @@ export default function Home() {
   ];
   return (
     <main>
-      <JsonLd data={[faqJsonLd(FAQ), itemListJsonLd(PAGES.slice(0, 30).map((p) => ({ name: p.kw, path: pageEncodedPath(p) })))]} />
+      <JsonLd data={[faqJsonLd(FAQ), itemListJsonLd(PAGES.slice(0, 30).map((p) => ({ name: p.kw, path: pageEncodedPath(p), image: pageImage(p) })))]} />
 
       <section className="hero">
         <div className="wrap hero-grid">

@@ -13,7 +13,7 @@ export default function AreaIndex() {
   const groups = [...GROUPS.entries()];
   return (
     <main>
-      <JsonLd data={[breadcrumbJsonLd([{ name: '홈', path: '/' }, { name: '지역별 안내', path: '/area/' }]), itemListJsonLd(groups.map(([g]) => ({ name: `${g} 두피문신 안내`, path: groupEncodedPath(g) })))]} />
+      <JsonLd data={[breadcrumbJsonLd([{ name: '홈', path: '/' }, { name: '지역별 안내', path: '/area/' }]), itemListJsonLd(groups.map(([g]) => ({ name: `${g} 두피문신 안내`, path: groupEncodedPath(g), image: '/images/hero.webp' })))]} />
       <section className="sec">
         <div className="wrap">
           <h1 className="page-h1">지역별 두피문신 안내</h1>

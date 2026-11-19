@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { GROUPS, PAGES, compose, getPage, groupEncodedPath, groupOf, groupPath, pagePath, pageEncodedPath, rotate } from '../../lib/compose';
+import { GROUPS, PAGES, compose, getPage, groupEncodedPath, groupOf, groupPath, pagePath, pageEncodedPath, pageImage, rotate } from '../../lib/compose';
 import { ACADEMY_POINTS } from '../../lib/content';
 import { BRAND, DISCLAIMER } from '../../lib/site';
 import { breadcrumbJsonLd, faqJsonLd, itemListJsonLd, serviceJsonLd } from '../../lib/jsonld';
@@ -38,7 +38,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
         breadcrumbJsonLd([{ name: '홈', path: '/' }, { name: `${g} 안내`, path: groupEncodedPath(g) }, { name: p.kw, path }]),
         serviceJsonLd({ name: p.kw, description: c.description, path, area: p.region }),
         faqJsonLd(c.faq),
-        ...(others.length ? [itemListJsonLd(others.map((x) => ({ name: x.kw, path: pageEncodedPath(x) })))] : []),
+        ...(others.length ? [itemListJsonLd(others.map((x) => ({ name: x.kw, path: pageEncodedPath(x), image: pageImage(x) })))] : []),
       ]} />
 
       <section className="hero kw">

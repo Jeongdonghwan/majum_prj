@@ -36,9 +36,9 @@ export const serviceJsonLd = (o: { name: string; description: string; path: stri
   provider: { '@id': `${SITE_URL}/#business` }, dateModified: UPDATED,
 });
 
-// 캐러셀용 ItemList — path는 인코딩된 경로(pageEncodedPath)
-export const itemListJsonLd = (items: { name: string; path: string }[]) => ({
+// 캐러셀용 ItemList — path는 인코딩된 경로(pageEncodedPath). image(그 페이지 og 사진)는 필수 — 네이버 검색 결과 썸네일 카드 줄 조건
+export const itemListJsonLd = (items: { name: string; path: string; image?: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}${it.path}`, name: it.name })),
+  itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}${it.path}`, name: it.name, ...(it.image ? { image: `${SITE_URL}${it.image}` } : {}) })),
 });

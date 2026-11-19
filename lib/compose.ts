@@ -214,3 +214,6 @@ export function compose(p: Page) {
     showAcademy: topic === 'academy' || topic === 'startup',
   };
 }
+
+// 페이지 대표 사진(og 와 같은 것) — ItemList 썸네일에 쓴다
+export const pageImage = (p: Page) => `/images/${compose(p).beforeAfter[0]}.webp`;

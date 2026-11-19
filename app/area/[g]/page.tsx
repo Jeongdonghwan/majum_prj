@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BRAND } from '../../../lib/site';
-import { GROUPS, groupBySlug, groupEncodedPath, pageEncodedPath, pagePath } from '../../../lib/compose';
+import { GROUPS, groupBySlug, groupEncodedPath, pageEncodedPath, pageImage, pagePath } from '../../../lib/compose';
 import { breadcrumbJsonLd, itemListJsonLd } from '../../../lib/jsonld';
 import { JsonLd, Location } from '../../../components/Common';
 
@@ -32,7 +32,7 @@ export default function AreaPage({ params }: { params: { g: string } }) {
     <main>
       <JsonLd data={[
         breadcrumbJsonLd([{ name: '홈', path: '/' }, { name: '지역별 안내', path: '/area/' }, { name: `${g} 안내`, path: groupEncodedPath(g) }]),
-        itemListJsonLd(ps.slice(0, 30).map((p) => ({ name: p.kw, path: pageEncodedPath(p) }))),
+        itemListJsonLd(ps.slice(0, 30).map((p) => ({ name: p.kw, path: pageEncodedPath(p), image: pageImage(p) }))),
       ]} />
       <section className="sec">
         <div className="wrap">

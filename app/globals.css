@@ -267,3 +267,34 @@ figure.mask { margin: 0; border-radius: 24px; overflow: hidden; }
 .rv-compact li em { font-style: normal; color: var(--wine); font-weight: 700; margin-left: 6px; }
 .page-h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; margin: 0; }
 .angle-h { font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 800; letter-spacing: -.02em; margin: 48px 0 14px; }
+
+/* 키워드 페이지 — 레이 모범 구조(2026-11-24): 분류 줄, h1 수식어, 핵심 요약 상자, 번호 절(한 문단), 옆 칸 바로 확인 */
+.x-cat { margin: 0 0 12px; font-size: .82rem; font-weight: 700; letter-spacing: .02em; color: var(--wine); }
+.hero-title .hero-sub { display: block; margin-top: 14px; font-size: .44em; font-weight: 600; line-height: 1.45; letter-spacing: -.02em; color: var(--muted); }
+.x-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; align-items: start; }
+.x-sum { background: var(--soft); border-radius: var(--r); padding: 30px 30px 26px; margin-bottom: 40px; }
+.x-sum h2 { margin: 0 0 12px; font-size: 1.2rem; }
+.x-sum p { margin: 0 0 20px; color: var(--ink-2); line-height: 1.85; }
+.x-sum dl, .x-side dl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin: 0; }
+.x-sum dl div, .x-side dl div { border-left: 2px solid var(--wine); padding-left: 12px; }
+.x-sum dt, .x-side dt { font-size: .78rem; font-weight: 700; color: var(--wine); }
+.x-sum dd, .x-side dd { margin: 2px 0 0; font-size: .95rem; }
+.x-article section { padding: 30px 0 12px; border-top: 1px solid var(--line); }
+.x-article h2 { display: flex; align-items: baseline; gap: 12px; margin: 0 0 14px; font-size: clamp(1.18rem, 2.2vw, 1.42rem); line-height: 1.4; }
+.x-article h2 span { flex: none; font-size: .8rem; color: var(--wine); font-variant-numeric: tabular-nums; }
+.x-article p { margin: 0 0 16px; color: var(--ink-2); font-size: 1.05rem; line-height: 1.9; }
+.x-cases { margin-top: 30px; }
+.x-faq { margin-top: 44px; }
+.x-faq h2 { margin: 0 0 18px; font-size: 1.42rem; }
+.x-side { position: sticky; top: 96px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 26px 24px; display: grid; gap: 14px; }
+.x-side h3 { margin: 0; font-size: 1.05rem; }
+.x-side dl { grid-template-columns: 1fr; }
+.x-side .btn-kakao { display: flex; justify-content: center; padding: 14px 18px; border-radius: 12px; text-decoration: none; font-weight: 600; background: var(--wine); color: #fff; }
+.x-side .link { font-weight: 600; text-decoration: none; font-variant-numeric: tabular-nums; }
+.x-related { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.x-related h3 { margin: 0 0 12px; font-size: 1.05rem; }
+.x-related ul { list-style: none; margin: 0; padding: 0; }
+.x-related li { border-bottom: 1px solid var(--line); }
+.x-related a { display: block; padding: 10px 0; text-decoration: none; color: var(--ink-2); }
+.x-related a:hover { color: var(--wine); }
+@media (max-width: 900px) { .x-grid { grid-template-columns: 1fr; gap: 36px; } .x-side { position: static; } .x-sum { padding: 22px 18px; } .x-sum dl { grid-template-columns: 1fr; } .x-related { grid-template-columns: 1fr; } }

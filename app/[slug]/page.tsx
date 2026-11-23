@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { GROUPS, PAGES, compose, getPage, groupEncodedPath, groupOf, groupPath, pagePath, pageEncodedPath, pageImage, rotate } from '../../lib/compose';
-import { ACADEMY_POINTS } from '../../lib/content';
-import { BRAND, DISCLAIMER } from '../../lib/site';
+import { GROUPS, PAGES, getPage, groupEncodedPath, groupOf, groupPath, pagePath, pageEncodedPath, pageImage, rotate } from '../../lib/compose';
+import { composeRay } from '../../lib/ray';
+import { BRAND, BUSINESS, CONTACT, DISCLAIMER, tel } from '../../lib/site';
 import { breadcrumbJsonLd, faqJsonLd, itemListJsonLd, serviceJsonLd } from '../../lib/jsonld';
-import { Carousel, Cta, Head, JsonLd, Location } from '../../components/Common';
+import { Carousel, Cta, JsonLd } from '../../components/Common';
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -15,22 +15,22 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const p = getPage(params.slug);
   if (!p) return {};
-  const c = compose(p);
+  const c = composeRay(p);
   const url = pageEncodedPath(p);
   return { title: c.title, description: c.description, alternates: { canonical: url }, openGraph: { title: c.title, description: c.description, url, images: [`/images/${c.beforeAfter[0]}.webp`] } };
 }
 
+// 레이 모범 구조: 분류 줄 → h1(키워드+수식어) → 설명 → 핵심 요약 → 번호 절 6개 → FAQ → 관련 링크 (lib/ray.ts)
 export default function KeywordPage({ params }: { params: { slug: string } }) {
   const p = getPage(params.slug);
   if (!p) notFound();
-  const c = compose(p);
+  const c = composeRay(p);
   const path = pageEncodedPath(p);
-  // 관련 페이지: 같은 지역 묶음에서 해시로 고정 10개 + 지역 허브(내 지역·인근 지역)
   const g = groupOf(p);
-  const others = rotate(GROUPS.get(g)!.filter((x) => x.slug !== p.slug), p.slug, 'rel').slice(0, 10);
-  const hubs = [g, ...c.region.nearby.filter((n) => GROUPS.has(n) && n !== g)].slice(0, 4);
-  let n = 0;
-  const no = () => String(++n).padStart(2, '0');
+  const sameGroup = rotate(GROUPS.get(g)!.filter((x) => x.slug !== p.slug), p.slug, 'rel').slice(0, 6);
+  const sameTerm = rotate(PAGES.filter((x) => x.term === p.term && groupOf(x) !== g), p.slug, 'term').slice(0, 4);
+  const hubs = [g, ...c.region.nearby.filter((n) => GROUPS.has(n) && n !== g)].slice(0, 3);
+  const listed = [...sameGroup, ...sameTerm];
 
   return (
     <main>
@@ -38,14 +38,15 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
         breadcrumbJsonLd([{ name: '홈', path: '/' }, { name: `${g} 안내`, path: groupEncodedPath(g) }, { name: p.kw, path }]),
         serviceJsonLd({ name: p.kw, description: c.description, path, area: p.region }),
         faqJsonLd(c.faq),
-        ...(others.length ? [itemListJsonLd(others.map((x) => ({ name: x.kw, path: pageEncodedPath(x), image: pageImage(x) })))] : []),
+        ...(listed.length ? [itemListJsonLd(listed.map((x) => ({ name: x.kw, path: pageEncodedPath(x), image: pageImage(x) })))] : []),
       ]} />
 
       <section className="hero kw">
         <div className="wrap hero-grid">
           <div className="hero-copy">
             <nav className="crumbs"><Link href="/">{BRAND}</Link><span>/</span>{p.kw}</nav>
-            <h1 className="hero-title"><span><i>{p.kw}</i></span></h1>
+            <p className="x-cat">{c.cat}</p>
+            <h1 className="hero-title"><span><i>{p.kw}</i></span>{' '}<span className="hero-sub">{c.h1sub}</span></h1>
             <p className="hero-lead">{c.lead}</p>
             <Cta />
           </div>
@@ -57,98 +58,52 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
       </section>
 
       <section className="sec">
-        <div className="wrap narrow">
-          {c.intro.map((t, i) => <p key={i} className={i === 0 ? 'body first' : 'body'} data-reveal>{t}</p>)}
-          {c.angle && <>
-            <h2 className="angle-h" data-reveal>{c.angle.heading}</h2>
-            {c.angle.paras.map((t, i) => <p key={i} className="body" data-reveal>{t}</p>)}
-          </>}
-        </div>
-      </section>
-
-      <section className="sec tint">
-        <div className="wrap">
-          <Head no={no()} label="오시는 길" title={c.region.heading} />
-          <div className="route">
-            <div className="route-text" data-reveal>{c.region.paras.map((t, i) => <p key={i} className="body">{t}</p>)}</div>
-            <dl className="route-dl" data-reveal>
-              {c.region.dl.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
-            </dl>
-          </div>
-        </div>
-      </section>
-
-      <section className="sec">
-        <div className="wrap">
-          <Head no={no()} label="사례" title={`${c.area.name} 시술 사례`} />
-          <Carousel id="kw-results" items={c.beforeAfter.map((n2) => ({ src: `/images/${n2}.webp`, cap: c.area.name }))} />
-        </div>
-      </section>
-
-      <section className="sec tint">
-        <div className="wrap">
-          <Head no={no()} label="부위" title={c.focus.heading} />
-          <div className="focus">
-            {c.focus.items.map((it, i) => (
-              <article key={it.area.key} data-reveal style={{ transitionDelay: `${i * 100}ms` }}>
-                <img src={`/images/${it.area.photos[1]}.webp`} alt={`${p.region} ${it.area.name} 두피문신 사례`} loading="lazy" />
-                <div>
-                  <p className="focus-en">{it.area.en}</p>
-                  <h3>{it.area.name}</h3>
-                  <p>{it.text}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p className="more-link" data-reveal><Link href="/#areas">부위 9가지 전체 보기</Link></p>
-        </div>
-      </section>
-
-      {c.showAcademy && (
-        <section className="sec">
-          <div className="wrap">
-            <Head no={no()} label="아카데미" title="무엇을 배우게 되나요" />
-            <div className="acad">
-              <ol className="acad-list reveal-group">{ACADEMY_POINTS.map((a, i) => <li key={a.t}><span>{String(i + 1).padStart(2, '0')}</span><div><h3>{a.t}</h3><p>{a.d}</p></div></li>)}</ol>
-              <div className="acad-stack">{['academy-4', 'academy-5', 'academy-cert'].map((x) => <img key={x} src={`/images/${x}.webp`} alt={`${p.region} 두피문신 교육 수업`} loading="lazy" data-reveal />)}</div>
+        <div className="wrap x-grid">
+          <div className="x-main">
+            <section className="x-sum" data-reveal>
+              <h2>{p.kw} 핵심 요약</h2>
+              <p>{c.summary}</p>
+              <dl>{c.facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+            </section>
+            <article className="x-article">
+              {c.sections.map((x, i) => (
+                <section key={i}>
+                  <h2><span>{String(i + 1).padStart(2, '0')}</span>{x.h}</h2>
+                  <p>{x.p}</p>
+                </section>
+              ))}
+            </article>
+            <div className="x-cases">
+              <Carousel id="kw-results" items={c.beforeAfter.map((n2) => ({ src: `/images/${n2}.webp`, cap: `${c.area.name} 사례` }))} />
             </div>
+            <section className="x-faq" id="faq">
+              <h2>{p.kw} 자주 묻는 질문</h2>
+              <div className="faq">{c.faq.map((f) => <details key={f.q}><summary>{f.q}<i /></summary><p>{f.a}</p></details>)}</div>
+            </section>
           </div>
-        </section>
-      )}
-
-      <section className="sec">
-        <div className="wrap">
-          <Head no={no()} label="과정" title={`${p.region}에서 오시면`} />
-          <ol className="steps reveal-group">{c.steps.map((st, i) => <li key={st.t}><span>{String(i + 1).padStart(2, '0')}</span><h3>{st.t}</h3><p>{st.d}</p></li>)}</ol>
-          <p className="more-link" data-reveal><Link href="/#process">전체 6단계 보기</Link></p>
+          <aside className="x-side">
+            <h3>바로 확인</h3>
+            <dl>
+              <div><dt>본점</dt><dd>{BUSINESS.address}</dd></div>
+              <div><dt>오시는 길</dt><dd>{c.facts[1][1]}</dd></div>
+            </dl>
+            <a className="btn-kakao" href={CONTACT.kakao} target="_blank" rel="noopener noreferrer">카카오톡으로 사진 보내기</a>
+            <a className="link" href={tel}>전화 {CONTACT.phone}</a>
+          </aside>
         </div>
       </section>
 
       <section className="sec tint">
-        <div className="wrap narrow">
-          <Head no={no()} label="자주 묻는 질문" title={`${p.kw} 자주 묻는 질문`} />
-          <div className="faq">{c.faq.map((f) => <details key={f.q} data-reveal><summary>{f.q}<i /></summary><p>{f.a}</p></details>)}</div>
-        </div>
-      </section>
-
-      <section className="sec">
-        <div className="wrap">
-          <div className="rv-compact" data-reveal>
-            <p className="rv-compact-line">{c.reviews.line} 받으신 분들이 많이 고른 말:</p>
-            <ul>{c.reviews.picks.map(([k, v]) => <li key={k}><span>“{k}”</span><em>{v}</em></li>)}</ul>
-            <Link href="/#reviews" className="link">리뷰 키워드 전체 보기</Link>
-          </div>
-          <Location lead={c.where} />
-          {others.length > 0 && (
-            <div className="kw-links" data-reveal><p className="kw-h">함께 보는 안내</p><ul>{others.map((x) => <li key={x.slug}><Link href={pagePath(x)}>{x.kw}</Link></li>)}{hubs.map((h) => <li key={h}><Link href={groupPath(h)}>{h} 안내 전체</Link></li>)}</ul></div>
-          )}
+        <div className="wrap x-related">
+          {sameGroup.length > 0 && <div><h3>{g}, 이어서 볼 안내</h3><ul>{sameGroup.map((x) => <li key={x.slug}><Link href={pagePath(x)}>{x.kw}</Link></li>)}</ul></div>}
+          {sameTerm.length > 0 && <div><h3>같은 주제, 다른 지역</h3><ul>{sameTerm.map((x) => <li key={x.slug}><Link href={pagePath(x)}>{x.kw}</Link></li>)}</ul></div>}
+          <div><h3>지역 안내</h3><ul>{hubs.map((h) => <li key={h}><Link href={groupPath(h)}>{h} 안내 전체</Link></li>)}</ul></div>
         </div>
       </section>
 
       <section className="closing">
         <div className="wrap"><div className="closing-box" data-reveal>
           <h2>{c.closing.heading}</h2>
-          <p>{c.closing.text}</p>
           <Cta dark />
           <p className="disc">{DISCLAIMER}</p>
         </div></div>

@@ -42,7 +42,12 @@ export function composeRay(p: Page) {
   const regionWords = [...p.region.split(' '), p.parent, '광주', '풍암', '서구'].filter(Boolean);
   const subs = SUBS[t](c.area.name, c.area2.name, c.area.look);
   const ok = subs.filter((x) => !regionWords.some((w) => kw.includes(w) && x.includes(w)));
-  const h1sub = pick(ok.length ? ok : subs, s, 'h1');
+  // title 앞부분 = h1 글자 그대로(키워드 + 수식어, 40자 이하) — 넘는 벌은 빼고, 다 넘으면 가장 짧은 벌을 구 단위로 자른다
+  const base = ok.length ? ok : subs;
+  const fit = base.filter((x) => `${kw} ${x}`.length <= 40);
+  let h1sub = pick(fit.length ? fit : [[...base].sort((x, y) => x.length - y.length)[0]], s, 'h1');
+  while (`${kw} ${h1sub}`.length > 40 && /[\s·,]/.test(h1sub)) h1sub = h1sub.replace(/[\s·,]+[^\s·,]*$/, '');
+  const title = `${kw} ${h1sub} | ${BRAND}`;
 
   const summary = [
     pick({
@@ -105,5 +110,5 @@ export function composeRay(p: Page) {
   });
   const description = cands.find((x) => x.length >= 50 && x.length <= 80) || cands.find((x) => x.length <= 80) || cands[cands.length - 1];
 
-  return { ...c, h1sub, summary, sections, facts, description, cat: c.eyebrow };
+  return { ...c, title, h1sub, summary, sections, facts, description, cat: c.eyebrow };
 }

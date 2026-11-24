@@ -17,7 +17,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   if (!p) return {};
   const c = composeRay(p);
   const url = pageEncodedPath(p);
-  return { title: c.title, description: c.description, alternates: { canonical: url }, openGraph: { title: c.title, description: c.description, url, images: [`/images/${c.beforeAfter[0]}.webp`] } };
+  return { title: c.title, description: c.description, alternates: { canonical: url }, openGraph: { type: 'website', siteName: BRAND, locale: 'ko_KR', title: c.title, description: c.description, url, images: [`/images/${c.beforeAfter[0]}.webp`] }, twitter: { card: 'summary_large_image', title: c.title, description: c.description, images: [`/images/${c.beforeAfter[0]}.webp`] } };
 }
 
 // 레이 모범 구조: 분류 줄 → h1(키워드+수식어) → 설명 → 핵심 요약 → 번호 절 6개 → FAQ → 관련 링크 (lib/ray.ts)
